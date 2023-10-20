@@ -18,7 +18,11 @@ import { makeUploadToS3Record } from '../../../domain/UploadToS3Record';
 import { persistRecord } from '../../../useCases/PersistRecord';
 
 export const computeSha256 = (bytes: Buffer) => crypto.createHash('sha256').update(bytes).digest('base64');
-export const computeSha256Json = () => "TODO IMPLEMENT";
+export const computeSha256Json = (jsonObject: any): string => {
+  const jsonString = JSON.stringify(jsonObject);
+  return crypto.createHash('sha256').update(jsonString).digest('base64');
+}
+
 
 const handler =
   (env: SystemEnv): Handler =>
