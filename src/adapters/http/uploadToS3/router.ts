@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import crypto from 'crypto';
 import express from 'express';
 import { pipe } from 'fp-ts/function';
@@ -33,7 +35,7 @@ const handler =
           checksumAlg: t.union([t.undefined, AmzSdkChecksumAlg]).decode(req.headers['x-amz-sdk-checksum-algorithm']),
           secret: AmzMetaSecret.decode(req.headers['x-amz-meta-secret']),
           checksum: AmzChecksumSHA256.decode(req.headers['x-amz-checksum-sha256']),
-          computedSha256: E.of(req.headers['content-type'] === 'application/json' ? computeSha256Json() : computeSha256(req.body)),
+          computedSha256: E.of(req.headers['content-type'] === 'application/json' ? computeSha256Json(req.body) : computeSha256(req.body)),
         }),
         E.map(flow(makeUploadToS3Record(env), constant, persistRecord(env))),
         // Create response
