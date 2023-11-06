@@ -3,19 +3,17 @@ import * as O from 'fp-ts/Option';
 import * as RA from 'fp-ts/ReadonlyArray';
 import { flow, identity, pipe } from 'fp-ts/function';
 import * as t from 'io-ts';
-import { FullSentNotificationV21 } from '../generated/pnapi/FullSentNotificationV21';
 import { NewNotificationRequestStatusResponseV21 } from '../generated/pnapi/NewNotificationRequestStatusResponseV21';
 import { NotificationDocument } from '../generated/pnapi/NotificationDocument';
 import { PreLoadResponse } from '../generated/pnapi/PreLoadResponse';
 import { SystemEnv } from '../useCases/SystemEnv';
-import { NotificationRequest } from './NotificationRequest';
+import { Notification } from './Notification';
 import { AuditRecord, Record } from './Repository';
 import { computeSnapshot } from './Snapshot';
 import { UploadToS3Record } from './UploadToS3Record';
 import { authorizeApiKey } from './authorize';
 import { Response, UnauthorizedMessageBody } from './types';
 import { VALID_CAPS } from './validCaps';
-import { Notification } from './Notification';
 
 export type CheckNotificationStatusRecord = AuditRecord & {
   type: 'CheckNotificationStatusRecord';
