@@ -1,4 +1,5 @@
 /* eslint-disable sonarjs/prefer-single-boolean-return */
+/* eslint-disable functional/no-let */
 
 import { pipe } from 'fp-ts/lib/function';
 import * as O from 'fp-ts/Option';
@@ -100,8 +101,8 @@ export const makeGetNotificationPriceRecord =
               return true;
             }
           }
-        })
-      })
+        });
+      });
     }
 
     return amountToReturn;
