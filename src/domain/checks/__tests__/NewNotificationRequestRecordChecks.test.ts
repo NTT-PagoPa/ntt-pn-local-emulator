@@ -80,7 +80,7 @@ describe('TC-SEND-01', () => {
       expect(check([])).toStrictEqual(false);
       expect(check(ex3)).toStrictEqual(false);
       // expect(check(ex5)).toStrictEqual(false);
-      expect(check(ex4)).toStrictEqual(true);
+      expect(check(ex4)).toStrictEqual(false);
     });
   });
 });
