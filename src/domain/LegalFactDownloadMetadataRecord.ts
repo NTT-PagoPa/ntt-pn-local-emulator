@@ -16,7 +16,7 @@ import { makePnDownloadDocumentURL } from './PnDownloadDocumentURL';
 
 export type LegalFactDownloadMetadataRecord = AuditRecord & {
   type: 'LegalFactDownloadMetadataRecord';
-  input: { apiKey: string; legalFactType: LegalFactCategory; legalFactId: string; iun: IUN };
+  input: { apiKey: string; legalFactId: string; iun: IUN };
   output:
     | Response<200, LegalFactDownloadMetadataResponse>
     | Response<403, UnauthorizedMessageBody>

@@ -21,7 +21,6 @@ const handler =
       Apply.sequenceS(E.Apply)({
         apiKey: t.string.decode(req.headers['x-api-key']),
         iun: IUN.decode(req.params.iun),
-        legalFactType: LegalFactCategory.decode(req.params.legalFactType),
         legalFactId: t.string.decode(req.params.legalFactId),
       }),
       E.map(flow(makeLegalFactDownloadMetadataRecord(env), persistRecord(env))),
@@ -36,7 +35,7 @@ const handler =
 export const makeGetLegalFactDocumentRouter = (env: SystemEnv): express.Router => {
   const router = express.Router();
 
-  router.get('/delivery-push/:iun/legal-facts/:legalFactType/:legalFactId', toExpressHandler(handler(env)));
+  router.get('/delivery-push/:iun/legal-facts/:legalFactId', toExpressHandler(handler(env)));
 
   return router;
 };
