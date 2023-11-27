@@ -1,18 +1,17 @@
 import express from 'express';
+import * as Apply from 'fp-ts/Apply';
+import * as E from 'fp-ts/Either';
+import * as T from 'fp-ts/Task';
+import * as TE from 'fp-ts/TaskEither';
+import { flow } from 'fp-ts/function';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import * as E from 'fp-ts/Either';
-import * as TE from 'fp-ts/TaskEither';
-import * as T from 'fp-ts/Task';
-import * as Apply from 'fp-ts/Apply';
-import { flow } from 'fp-ts/function';
-import { Handler, toExpressHandler } from '../Handler';
-import * as Problem from '../Problem';
+import { makeLegalFactDownloadMetadataRecord } from '../../../domain/LegalFactDownloadMetadataRecord';
 import { IUN } from '../../../generated/pnapi/IUN';
-import { LegalFactCategory } from '../../../generated/pnapi/LegalFactCategory';
 import { persistRecord } from '../../../useCases/PersistRecord';
 import { SystemEnv } from '../../../useCases/SystemEnv';
-import { makeLegalFactDownloadMetadataRecord } from '../../../domain/LegalFactDownloadMetadataRecord';
+import { Handler, toExpressHandler } from '../Handler';
+import * as Problem from '../Problem';
 
 const handler =
   (env: SystemEnv): Handler =>
