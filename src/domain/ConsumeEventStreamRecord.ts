@@ -16,6 +16,8 @@ import { DomainEnv } from './DomainEnv';
 import { computeSnapshot } from './Snapshot';
 import { authorizeApiKey } from './authorize';
 import { CreateEventStreamRecord } from './CreateEventStreamRecord';
+import { makeLogger } from '../logger';
+import { StreamMetadataResponse } from '../generated/pnapi/StreamMetadataResponse';
 
 export type ConsumeEventStreamRecord = AuditRecord & {
   type: 'ConsumeEventStreamRecord';
