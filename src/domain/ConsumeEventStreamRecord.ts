@@ -8,6 +8,8 @@ import * as RA from 'fp-ts/ReadonlyArray';
 import { NonNegativeInteger } from '@pagopa/ts-commons/lib/numbers';
 import { ProgressResponse } from '../generated/pnapi/ProgressResponse';
 import { ProgressResponseElement } from '../generated/pnapi/ProgressResponseElement';
+import { makeLogger } from '../logger';
+import { StreamMetadataResponse } from '../generated/pnapi/StreamMetadataResponse';
 import { NotificationRequest } from './NotificationRequest';
 import { Notification } from './Notification';
 import { Record, AuditRecord } from './Repository';
@@ -16,8 +18,6 @@ import { DomainEnv } from './DomainEnv';
 import { computeSnapshot } from './Snapshot';
 import { authorizeApiKey } from './authorize';
 import { CreateEventStreamRecord } from './CreateEventStreamRecord';
-import { makeLogger } from '../logger';
-import { StreamMetadataResponse } from '../generated/pnapi/StreamMetadataResponse';
 
 export type ConsumeEventStreamRecord = AuditRecord & {
   type: 'ConsumeEventStreamRecord';
