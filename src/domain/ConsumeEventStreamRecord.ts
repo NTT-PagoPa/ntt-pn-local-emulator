@@ -6,10 +6,8 @@ import * as O from 'fp-ts/Option';
 import * as E from 'fp-ts/Either';
 import * as RA from 'fp-ts/ReadonlyArray';
 import { NonNegativeInteger } from '@pagopa/ts-commons/lib/numbers';
-import { ProgressResponse } from '../generated/streams/ProgressResponse';
-import { ProgressResponseElement } from '../generated/streams/ProgressResponseElement';
-import { StreamMetadataResponse } from '../generated/streams/StreamMetadataResponse';
-import { makeLogger } from '../logger';
+import { ProgressResponse } from '../generated/pnapi/ProgressResponse';
+import { ProgressResponseElement } from '../generated/pnapi/ProgressResponseElement';
 import { NotificationRequest } from './NotificationRequest';
 import { Notification } from './Notification';
 import { Record, AuditRecord } from './Repository';
@@ -48,11 +46,11 @@ export const makeProgressResponseElementFromNotification =
   (notification: Notification): ReadonlyArray<ProgressResponseElement> => 
     pipe(
       notification.timeline,
-      RA.map(({ category, legalFactsIds, details }) => ({
+      RA.map(({ /* category, */ legalFactsIds, details }) => ({
         ...makeProgressResponseElementFromNotificationRequest(timestamp)(notification),
         iun: notification.iun,
         newStatus: notification.notificationStatus,
-        timelineEventCategory: category,
+        // timelineEventCategory: category,
         legalFactsIds: legalFactsIds?.map((lf) => lf.key.replaceAll('safestorage://', '')) || [], // Modify the legalFactsIds directly
         recipientIndex: pipe(
           details && 'recIndex' in details ? details.recIndex : undefined,

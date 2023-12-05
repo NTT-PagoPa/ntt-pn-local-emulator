@@ -24,15 +24,13 @@ const handler =
       E.map(
         TE.fold(
           (_) => T.of(res.status(500).send(Problem.fromNumber(500))),
-          (_) => T.of(res.status(202).send())
+          ({ output }) => T.of(res.status(output.statusCode).send(output.returned))
         )
       )
     );
 
 export const makeDeleteNotificationRouter = (env: SystemEnv): express.Router => {
   const router = express.Router();
-
-  router.delete('/delivery-push/v2.0/notifications/cancel/:iun', toExpressHandler(handler(env)));
-
+  router.put('/delivery-push/v2.1/notifications/cancel/:iun', toExpressHandler(handler(env)));
   return router;
 };
