@@ -12,7 +12,6 @@ import { IUNGeneratorByIndex } from '../adapters/randexp/IUNGenerator';
 import { TimelineElementCategoryV20Enum } from '../generated/pnapi/TimelineElementCategoryV20';
 import { Notification } from './Notification';
 import { DomainEnv } from './DomainEnv';
-import { makeLogger } from '../logger';
 
 const makeTimelineListPEC =
   (env: DomainEnv) =>
@@ -158,8 +157,6 @@ const makeTimelineListPEC =
 export const makeTimelineList =
   (env: DomainEnv) =>
   (notification: FullSentNotificationV21): ReadonlyArray<TimelineElementV20> => {
-    const log = makeLogger();
-    log.info("STATO2: ", notification.notificationStatus);
     return [
       {
         elementId: `${notification.iun}_request_accepted`,
@@ -174,7 +171,7 @@ export const makeTimelineList =
       },
       ...pipe(notification.recipients, RA.chainWithIndex(makeTimelineListPEC(env)(notification))),
     ];
-  }
+  };
 
 export const makeNotificationStatusHistory =
   (env: DomainEnv) =>
