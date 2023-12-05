@@ -13,14 +13,17 @@ import { IUNGeneratorByIndex } from '../adapters/randexp/IUNGenerator';
 import { TimelineElementCategoryV20Enum } from '../generated/pnapi/TimelineElementCategoryV20';
 import { Notification } from './Notification';
 import { DomainEnv } from './DomainEnv';
+import { makeLogger } from '../logger';
 
 const makeTimelineListPEC =
   (env: DomainEnv) =>
-  (iun: IUN) =>
-  (index: number, recipient: NotificationRecipient): ReadonlyArray<TimelineElementV20> =>
-    [
+  (notification: FullSentNotificationV21) =>
+  (index: number, recipient: NotificationRecipient): ReadonlyArray<TimelineElementV20> => {
+    const log = makeLogger();
+    log.info("STATO: ", notification.notificationStatus);
+    return notification.notificationStatus !== NotificationStatusEnum.CANCELLED ? [
       {
-        elementId: `${iun}_aar_gen_${index}`,
+        elementId: `${notification.iun}_aar_gen_${index}`,
         timestamp: env.dateGenerator(),
         legalFactsIds: [],
         category: TimelineElementCategoryV20Enum.AAR_GENERATION,
@@ -31,7 +34,7 @@ const makeTimelineListPEC =
         },
       },
       {
-        elementId: `${iun}_get_address_${index}_source_PLATFORM_attempt_0`,
+        elementId: `${notification.iun}_get_address_${index}_source_PLATFORM_attempt_0`,
         timestamp: env.dateGenerator(),
         legalFactsIds: [],
         category: TimelineElementCategoryV20Enum.GET_ADDRESS,
@@ -43,7 +46,7 @@ const makeTimelineListPEC =
         },
       },
       {
-        elementId: `${iun}_get_address_${index}_source_SPECIAL_attempt_0`,
+        elementId: `${notification.iun}_get_address_${index}_source_SPECIAL_attempt_0`,
         timestamp: env.dateGenerator(),
         legalFactsIds: [],
         category: TimelineElementCategoryV20Enum.GET_ADDRESS,
@@ -55,7 +58,7 @@ const makeTimelineListPEC =
         },
       },
       {
-        elementId: `${iun}_send_digital_domicile_${index}_source_SPECIAL_attempt_0`,
+        elementId: `${notification.iun}_send_digital_domicile_${index}_source_SPECIAL_attempt_0`,
         timestamp: env.dateGenerator(),
         legalFactsIds: [],
         category: TimelineElementCategoryV20Enum.SEND_DIGITAL_DOMICILE,
@@ -67,11 +70,11 @@ const makeTimelineListPEC =
         },
       },
       {
-        elementId: `${iun}_digital_delivering_progress_${index}_source_SPECIAL_attempt_0_progidx_1`,
+        elementId: `${notification.iun}_digital_delivering_progress_${index}_source_SPECIAL_attempt_0_progidx_1`,
         timestamp: env.dateGenerator(),
         legalFactsIds: [
           {
-            key: `safestorage://PN_NOTIFICATION_ATTACHMENTS-${IUNGeneratorByIndex(iun, 1)}`,
+            key: `safestorage://PN_NOTIFICATION_ATTACHMENTS-${IUNGeneratorByIndex(notification.iun, 1)}`,
             category: LegalFactCategoryEnum.PEC_RECEIPT,
           },
         ],
@@ -87,11 +90,11 @@ const makeTimelineListPEC =
         },
       },
       {
-        elementId: `${iun}_send_digital_feedback_${index}_source_SPECIAL_attempt_0`,
+        elementId: `${notification.iun}_send_digital_feedback_${index}_source_SPECIAL_attempt_0`,
         timestamp: env.dateGenerator(),
         legalFactsIds: [
           {
-            key: `safestorage://PN_LEGAL_FACTS-0002-${IUNGeneratorByIndex(iun, 2)}`,
+            key: `safestorage://PN_LEGAL_FACTS-0002-${IUNGeneratorByIndex(notification.iun, 2)}`,
             category: LegalFactCategoryEnum.PEC_RECEIPT,
           },
         ],
@@ -106,11 +109,11 @@ const makeTimelineListPEC =
         },
       },
       {
-        elementId: `${iun}_digital_success_workflow_${index}`,
+        elementId: `${notification.iun}_digital_success_workflow_${index}`,
         timestamp: env.dateGenerator(),
         legalFactsIds: [
           {
-            key: `safestorage://PN_LEGAL_FACTS-0001-${IUNGeneratorByIndex(iun, 3)}`,
+            key: `safestorage://PN_LEGAL_FACTS-0001-${IUNGeneratorByIndex(notification.iun, 3)}`,
             category: LegalFactCategoryEnum.DIGITAL_DELIVERY,
           },
         ],
@@ -121,7 +124,7 @@ const makeTimelineListPEC =
         },
       },
       {
-        elementId: `${iun}_schedule_refinement_workflow_${index}`,
+        elementId: `${notification.iun}_schedule_refinement_workflow_${index}`,
         timestamp: env.dateGenerator(),
         legalFactsIds: [],
         category: TimelineElementCategoryV20Enum.SCHEDULE_REFINEMENT,
@@ -130,7 +133,7 @@ const makeTimelineListPEC =
         },
       },
       {
-        elementId: `${iun}_refinement_${index}`,
+        elementId: `${notification.iun}_refinement_${index}`,
         timestamp: env.dateGenerator(),
         legalFactsIds: [],
         category: TimelineElementCategoryV20Enum.REFINEMENT,
@@ -140,11 +143,11 @@ const makeTimelineListPEC =
         },
       },
       {
-        elementId: `${iun}_notification_viewed_${index}`,
+        elementId: `${notification.iun}_notification_viewed_${index}`,
         timestamp: env.dateGenerator(),
         legalFactsIds: [
           {
-            key: `safestorage://PN_LEGAL_FACTS-0002-${IUNGeneratorByIndex(iun, 4)}`,
+            key: `safestorage://PN_LEGAL_FACTS-0002-${IUNGeneratorByIndex(notification.iun, 4)}`,
             category: LegalFactCategoryEnum.RECIPIENT_ACCESS,
           },
         ],
@@ -153,12 +156,169 @@ const makeTimelineListPEC =
           recIndex: index,
         },
       },
+    ] : [
+      {
+        elementId: `${notification.iun}_aar_gen_${index}`,
+        timestamp: env.dateGenerator(),
+        legalFactsIds: [],
+        category: TimelineElementCategoryV20Enum.AAR_GENERATION,
+        details: {
+          recIndex: index,
+          numberOfPages: 1,
+          generatedAarUrl: `safestorage://PN_AAR-0002-${env.iunGenerator()}`,
+        },
+      },
+      {
+        elementId: `${notification.iun}_get_address_${index}_source_PLATFORM_attempt_0`,
+        timestamp: env.dateGenerator(),
+        legalFactsIds: [],
+        category: TimelineElementCategoryV20Enum.GET_ADDRESS,
+        details: {
+          recIndex: index,
+          digitalAddressSource: DigitalAddressSourceEnum.PLATFORM,
+          isAvailable: false,
+          attemptDate: env.dateGenerator(),
+        },
+      },
+      {
+        elementId: `${notification.iun}_get_address_${index}_source_SPECIAL_attempt_0`,
+        timestamp: env.dateGenerator(),
+        legalFactsIds: [],
+        category: TimelineElementCategoryV20Enum.GET_ADDRESS,
+        details: {
+          recIndex: index,
+          digitalAddressSource: DigitalAddressSourceEnum.SPECIAL,
+          isAvailable: true,
+          attemptDate: env.dateGenerator(),
+        },
+      },
+      {
+        elementId: `${notification.iun}_send_digital_domicile_${index}_source_SPECIAL_attempt_0`,
+        timestamp: env.dateGenerator(),
+        legalFactsIds: [],
+        category: TimelineElementCategoryV20Enum.SEND_DIGITAL_DOMICILE,
+        details: {
+          recIndex: index,
+          digitalAddress: recipient.digitalDomicile,
+          digitalAddressSource: DigitalAddressSourceEnum.SPECIAL,
+          retryNumber: 0,
+        },
+      },
+      {
+        elementId: `${notification.iun}_digital_delivering_progress_${index}_source_SPECIAL_attempt_0_progidx_1`,
+        timestamp: env.dateGenerator(),
+        legalFactsIds: [
+          {
+            key: `safestorage://PN_NOTIFICATION_ATTACHMENTS-${IUNGeneratorByIndex(notification.iun, 1)}`,
+            category: LegalFactCategoryEnum.PEC_RECEIPT,
+          },
+        ],
+        category: TimelineElementCategoryV20Enum.SEND_DIGITAL_PROGRESS,
+        details: {
+          recIndex: index,
+          digitalAddress: recipient.digitalDomicile,
+          digitalAddressSource: DigitalAddressSourceEnum.SPECIAL,
+          retryNumber: 0,
+          notificationDate: env.dateGenerator(),
+          sendingReceipts: [{}],
+          shouldRetry: false,
+        },
+      },
+      {
+        elementId: `${notification.iun}_send_digital_feedback_${index}_source_SPECIAL_attempt_0`,
+        timestamp: env.dateGenerator(),
+        legalFactsIds: [
+          {
+            key: `safestorage://PN_LEGAL_FACTS-0002-${IUNGeneratorByIndex(notification.iun, 2)}`,
+            category: LegalFactCategoryEnum.PEC_RECEIPT,
+          },
+        ],
+        category: TimelineElementCategoryV20Enum.SEND_DIGITAL_FEEDBACK,
+        details: {
+          recIndex: index,
+          digitalAddress: recipient.digitalDomicile,
+          digitalAddressSource: DigitalAddressSourceEnum.SPECIAL,
+          // responseStatus: ResponseStatusEnum.OK,
+          notificationDate: env.dateGenerator(),
+          sendingReceipts: [{}],
+        },
+      },
+      {
+        elementId: `${notification.iun}_digital_success_workflow_${index}`,
+        timestamp: env.dateGenerator(),
+        legalFactsIds: [
+          {
+            key: `safestorage://PN_LEGAL_FACTS-0001-${IUNGeneratorByIndex(notification.iun, 3)}`,
+            category: LegalFactCategoryEnum.DIGITAL_DELIVERY,
+          },
+        ],
+        category: TimelineElementCategoryV20Enum.DIGITAL_SUCCESS_WORKFLOW,
+        details: {
+          recIndex: index,
+          digitalAddress: recipient.digitalDomicile,
+        },
+      },
+      {
+        elementId: `${notification.iun}_schedule_refinement_workflow_${index}`,
+        timestamp: env.dateGenerator(),
+        legalFactsIds: [],
+        category: TimelineElementCategoryV20Enum.SCHEDULE_REFINEMENT,
+        details: {
+          recIndex: index,
+        },
+      },
+      {
+        elementId: `${notification.iun}_refinement_${index}`,
+        timestamp: env.dateGenerator(),
+        legalFactsIds: [],
+        category: TimelineElementCategoryV20Enum.REFINEMENT,
+        details: {
+          recIndex: index,
+          notificationCost: 100,
+        },
+      },
+      {
+        elementId: `${notification.iun}_notification_viewed_${index}`,
+        timestamp: env.dateGenerator(),
+        legalFactsIds: [
+          {
+            key: `safestorage://PN_LEGAL_FACTS-0002-${IUNGeneratorByIndex(notification.iun, 4)}`,
+            category: LegalFactCategoryEnum.RECIPIENT_ACCESS,
+          },
+        ],
+        category: TimelineElementCategoryV20Enum.NOTIFICATION_VIEWED,
+        details: {
+          recIndex: index,
+        },
+      },
+      {
+        elementId: `NOTIFICATION_CANCELLATION_REQUEST.IUN_${notification.iun}`,
+        timestamp: env.dateGenerator(),
+        legalFactsIds: [],
+        category: TimelineElementCategoryV20Enum.NOTIFICATION_CANCELLATION_REQUEST,
+        details: {
+          cancellationRequestId: "90e3f130-cb23-4b6b-a0aa-858de7ffb3a0"
+        }
+      },
+      {
+        elementId: `NOTIFICATION_CANCELLED.IUN_${notification.iun}`,
+        timestamp: env.dateGenerator(),
+        legalFactsIds: [],
+        category: TimelineElementCategoryV20Enum.NOTIFICATION_CANCELLED,
+        details: {
+          notificationCost: 100,
+          notRefinedRecipientIndexes: [ 0 ]
+        }
+      }
     ];
+  }
 
 export const makeTimelineList =
   (env: DomainEnv) =>
-  (notification: FullSentNotificationV21): ReadonlyArray<TimelineElementV20> =>
-    [
+  (notification: FullSentNotificationV21): ReadonlyArray<TimelineElementV20> => {
+    const log = makeLogger();
+    log.info("STATO2: ", notification.notificationStatus);
+    return [
       {
         elementId: `${notification.iun}_request_accepted`,
         timestamp: env.dateGenerator(),
@@ -170,8 +330,9 @@ export const makeTimelineList =
         ],
         category: TimelineElementCategoryV20Enum.REQUEST_ACCEPTED,
       },
-      ...pipe(notification.recipients, RA.chainWithIndex(makeTimelineListPEC(env)(notification.iun))),
+      ...pipe(notification.recipients, RA.chainWithIndex(makeTimelineListPEC(env)(notification))),
     ];
+  }
 
 export const makeNotificationStatusHistory =
   (env: DomainEnv) =>
