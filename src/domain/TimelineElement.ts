@@ -156,8 +156,8 @@ const makeTimelineListPEC =
 
 export const makeTimelineList =
   (env: DomainEnv) =>
-  (notification: FullSentNotificationV21): ReadonlyArray<TimelineElementV20> => {
-    return [
+  (notification: FullSentNotificationV21): ReadonlyArray<TimelineElementV20> =>
+    [
       {
         elementId: `${notification.iun}_request_accepted`,
         timestamp: env.dateGenerator(),
@@ -171,7 +171,6 @@ export const makeTimelineList =
       },
       ...pipe(notification.recipients, RA.chainWithIndex(makeTimelineListPEC(env)(notification))),
     ];
-  };
 
 export const makeNotificationStatusHistory =
   (env: DomainEnv) =>
