@@ -30,7 +30,6 @@ export const IUNGeneratorByIndex = (iunKey: IUN, index: number): IUN => {
     innerMap.set(index, iun);
     legalFactsIdsMap.set(iunKey, innerMap);
   }
-
   // printLegalFactsIdsMap();
   return innerMap.get(index)!;
 };

@@ -45,7 +45,7 @@ export const makeFullSentNotification =
       (notification) => updateTimeline(env)(notification, notification.notificationStatus)
     );
 
-    const log = makeLogger();
+const log = makeLogger();
 const exactFullSentNotification = (env: DomainEnv, notification: FullSentNotificationV21): FullSentNotificationV21 =>
   ({
   // Remove all the properties not defined by FullSentNotificationV21 type
